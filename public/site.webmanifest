@@ -1,0 +1,9 @@
+{
+  "name": "A New Life",
+  "short_name": "ANL",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f5ef",
+  "theme_color": "#143642",
+  "icons": []
+}
