@@ -6,6 +6,23 @@ import { apiUrl } from './lib/api';
 import './index.css';
 
 type SplashLang = 'it' | 'en' | 'fr';
+const INTRO_SEEN_SESSION_KEY = 'introSplashSeen';
+
+function hasSeenIntroInSession(): boolean {
+  try {
+    return window.sessionStorage.getItem(INTRO_SEEN_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function markIntroSeenInSession() {
+  try {
+    window.sessionStorage.setItem(INTRO_SEEN_SESSION_KEY, '1');
+  } catch {
+    // Ignore storage errors and keep default behavior.
+  }
+}
 
 function getPreferredSplashLanguage(): SplashLang {
   const locale = window.navigator.language.toLowerCase();
@@ -57,18 +74,23 @@ function IntroSplash({ lang }: { lang: SplashLang }) {
 }
 
 function Root() {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => !hasSeenIntroInSession());
   const [splashLang] = useState<SplashLang>(getPreferredSplashLanguage);
 
   useEffect(() => {
+    if (!showIntro) {
+      return;
+    }
+
     const timer = window.setTimeout(() => {
       setShowIntro(false);
-    }, 5000);
+      markIntroSeenInSession();
+    }, 7000);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [showIntro]);
 
   return <HelmetProvider>{showIntro ? <IntroSplash lang={splashLang} /> : <App />}</HelmetProvider>;
 }
