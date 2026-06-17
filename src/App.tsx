@@ -106,7 +106,9 @@ function App() {
                 error={error}
               />
 
-              {!loading && !error && <ContactLinks title={contact?.title ?? 'Contact'} links={contact?.links ?? []} />}
+              {!loading && !error && (
+                <ContactLinks title={contact?.title ?? 'Contact'} links={contact?.links ?? []} lang={lang} />
+              )}
             </section>
           )}
 

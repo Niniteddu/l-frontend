@@ -1,15 +1,23 @@
 import type { ContactLink } from '../types/content';
+import type { Lang } from '../types/content';
 
 type ContactLinksProps = {
   title: string;
   links: ContactLink[];
+  lang: Lang;
 };
 
-export function ContactLinks({ title, links }: ContactLinksProps) {
+const CONTACT_HELPER_TEXT: Record<Lang, string> = {
+  it: 'Qui trovi i link utili disponibili per questa lingua.',
+  en: 'Here you can find useful links available for this language.',
+  fr: 'Vous trouverez ici les liens utiles disponibles pour cette langue.',
+};
+
+export function ContactLinks({ title, links, lang }: ContactLinksProps) {
   return (
     <>
       <h2 className="font-display text-3xl text-brand-deep">{title}</h2>
-      <p className="mt-3 text-slate-700">Qui trovi i link utili disponibili per questa lingua.</p>
+      <p className="mt-3 text-slate-700">{CONTACT_HELPER_TEXT[lang]}</p>
 
       <ul className="mt-5 grid gap-4 sm:grid-cols-2">
         {links.map((link) => (
