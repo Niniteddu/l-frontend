@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
+import { getPreferredLanguage } from './constants/site';
 import { apiUrl } from './lib/api';
+import type { Lang } from './types/content';
 import './index.css';
 
-type SplashLang = 'it' | 'en' | 'fr';
 const INTRO_SEEN_SESSION_KEY = 'introSplashSeen';
 
 function hasSeenIntroInSession(): boolean {
@@ -24,18 +25,7 @@ function markIntroSeenInSession() {
   }
 }
 
-function getPreferredSplashLanguage(): SplashLang {
-  const locale = window.navigator.language.toLowerCase();
-  if (locale.startsWith('fr')) {
-    return 'fr';
-  }
-  if (locale.startsWith('en')) {
-    return 'en';
-  }
-  return 'it';
-}
-
-const SPLASH_WELCOME: Record<SplashLang, string> = {
+const SPLASH_WELCOME: Record<Lang, string> = {
   it: 'Benvenuto',
   en: 'Welcome',
   fr: 'Bienvenue',
@@ -57,7 +47,7 @@ function requestWakeup() {
 
 requestWakeup();
 
-function IntroSplash({ lang }: { lang: SplashLang }) {
+function IntroSplash({ lang }: { lang: Lang }) {
   return (
     <section className="intro-splash" aria-label="Welcome intro">
       <div className="intro-light" aria-hidden="true" />
@@ -75,7 +65,7 @@ function IntroSplash({ lang }: { lang: SplashLang }) {
 
 function Root() {
   const [showIntro, setShowIntro] = useState(() => !hasSeenIntroInSession());
-  const [splashLang] = useState<SplashLang>(getPreferredSplashLanguage);
+  const [splashLang] = useState<Lang>(getPreferredLanguage);
 
   useEffect(() => {
     if (!showIntro) {

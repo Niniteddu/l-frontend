@@ -1,5 +1,6 @@
 import type { ContactLink } from '../types/content';
 import type { Lang } from '../types/content';
+import { UI_COPY } from '../constants/site';
 
 type ContactLinksProps = {
   title: string;
@@ -14,6 +15,8 @@ const CONTACT_HELPER_TEXT: Record<Lang, string> = {
 };
 
 export function ContactLinks({ title, links, lang }: ContactLinksProps) {
+  const uiCopy = UI_COPY[lang];
+
   return (
     <>
       <h2 className="font-display text-3xl text-brand-deep">{title}</h2>
@@ -30,7 +33,7 @@ export function ContactLinks({ title, links, lang }: ContactLinksProps) {
               rel="noreferrer"
               className="mt-3 inline-block rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white hover:bg-brand-sky"
             >
-              Visita
+              {uiCopy.contactVisitLabel}
             </a>
           </li>
         ))}

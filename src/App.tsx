@@ -2,28 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ContactLinks } from './components/ContactLinks';
 import { ContentFeedback } from './components/ContentFeedback';
-import { API_WAITING_MESSAGE, LANG_LABEL, SEO } from './constants/site';
+import { API_WAITING_MESSAGE, getPreferredLanguage, LANG_LABEL, OG_LOCALE, SEO, UI_COPY } from './constants/site';
 import { useSiteContent } from './hooks/useSiteContent';
 import { getCurrentPathname, withBase } from './lib/routing';
 import type { Lang } from './types/content';
-
-function getPreferredLanguage(): Lang {
-  const locale = window.navigator.language.toLowerCase();
-
-  if (locale.startsWith('it')) {
-    return 'it';
-  }
-
-  if (locale.startsWith('fr')) {
-    return 'fr';
-  }
-
-  if (locale.startsWith('en')) {
-    return 'en';
-  }
-
-  return 'en';
-}
 
 function App() {
   const [lang, setLang] = useState<Lang>(getPreferredLanguage);
@@ -31,12 +13,12 @@ function App() {
   const { brand, heading, homeHtml, contact, loading, waitingForApi, error } = useSiteContent(lang);
 
   const seo = useMemo(() => SEO[lang], [lang]);
+  const uiCopy = useMemo(() => UI_COPY[lang], [lang]);
   const waitingMessage = useMemo(() => API_WAITING_MESSAGE[lang], [lang]);
   const isContactPage = currentPath.startsWith('/contact');
-  const pageTitle = isContactPage ? `${brand} | ${contact?.title ?? 'Contact'}` : seo.title;
-  const pageDescription = isContactPage
-    ? 'Pagina contatti e link utili del progetto A New Life.'
-    : seo.description;
+  const contactTitle = contact?.title ?? uiCopy.contactFallbackTitle;
+  const pageTitle = isContactPage ? `${brand} | ${contactTitle}` : seo.title;
+  const pageDescription = isContactPage ? uiCopy.contactDescription : seo.description;
 
   useEffect(() => {
     const onLocationChange = () => {
@@ -60,7 +42,7 @@ function App() {
         <meta name="description" content={pageDescription} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
-        <meta property="og:locale" content={lang === 'it' ? 'it_IT' : lang === 'en' ? 'en_US' : 'fr_FR'} />
+        <meta property="og:locale" content={OG_LOCALE[lang]} />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
       </Helmet>
@@ -90,7 +72,7 @@ function App() {
                 href={isContactPage ? withBase('/') : withBase('/contact')}
                 className="rounded-full border border-white/70 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-white/10 sm:px-4 sm:py-2 sm:text-sm"
               >
-                {isContactPage ? 'Home' : 'Contact'}
+                {isContactPage ? uiCopy.homeLabel : uiCopy.contactLabel}
               </a>
             </div>
           </nav>
@@ -125,7 +107,7 @@ function App() {
               />
 
               {!loading && !error && (
-                <ContactLinks title={contact?.title ?? 'Contact'} links={contact?.links ?? []} lang={lang} />
+                <ContactLinks title={contactTitle} links={contact?.links ?? []} lang={lang} />
               )}
             </section>
           )}
