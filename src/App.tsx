@@ -7,8 +7,26 @@ import { useSiteContent } from './hooks/useSiteContent';
 import { getCurrentPathname, withBase } from './lib/routing';
 import type { Lang } from './types/content';
 
+function getPreferredLanguage(): Lang {
+  const locale = window.navigator.language.toLowerCase();
+
+  if (locale.startsWith('it')) {
+    return 'it';
+  }
+
+  if (locale.startsWith('fr')) {
+    return 'fr';
+  }
+
+  if (locale.startsWith('en')) {
+    return 'en';
+  }
+
+  return 'en';
+}
+
 function App() {
-  const [lang, setLang] = useState<Lang>('it');
+  const [lang, setLang] = useState<Lang>(getPreferredLanguage);
   const [currentPath, setCurrentPath] = useState(getCurrentPathname());
   const { brand, heading, homeHtml, contact, loading, waitingForApi, error } = useSiteContent(lang);
 
