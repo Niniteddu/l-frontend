@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
-import { fetchHomeContent } from '../services';
-import { inlineVerseReferences } from '../utils';
-import type { Lang } from '../types';
+import { fetchContact } from '../services';
+import type { ContactResponse, Lang } from '../types';
 
 /**
- * Site content state (home page only)
+ * Contact content state
  */
-type SiteContentState = {
-  brand: string;
-  heading: string;
-  homeHtml: string;
+type ContactContentState = {
+  contact: ContactResponse | null;
   loading: boolean;
   waitingForApi: boolean;
   error: string;
@@ -18,24 +15,22 @@ type SiteContentState = {
 /**
  * Default initial state
  */
-const initialState: SiteContentState = {
-  brand: 'A New Life',
-  heading: 'Una Vita Nuova',
-  homeHtml: '',
+const initialState: ContactContentState = {
+  contact: null,
   loading: true,
   waitingForApi: false,
   error: '',
 };
 
 /**
- * Hook to manage site content loading
- * Fetches home content for the specified language
+ * Hook to manage contact content loading
+ * Fetches contacts only when needed (on contact page)
  *
  * @param lang - Language for the content
- * @returns Current home content state
+ * @returns Current contact state
  */
-export function useSiteContent(lang: Lang): SiteContentState {
-  const [state, setState] = useState<SiteContentState>(initialState);
+export function useContactContent(lang: Lang): ContactContentState {
+  const [state, setState] = useState<ContactContentState>(initialState);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,17 +40,14 @@ export function useSiteContent(lang: Lang): SiteContentState {
       try {
         setState((current) => ({ ...current, loading: true, error: '' }));
 
-        // Load home content only
-        const homeData = await fetchHomeContent(lang);
+        const contactData = await fetchContact(lang);
 
         if (cancelled) {
           return;
         }
 
         setState({
-          brand: homeData.brand,
-          heading: homeData.heading,
-          homeHtml: inlineVerseReferences(homeData.content),
+          contact: contactData,
           loading: false,
           waitingForApi: false,
           error: '',

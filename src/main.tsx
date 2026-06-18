@@ -1,36 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
+import { IntroSplash } from './components/IntroSplash';
 import App from './App';
 import { getPreferredLanguage } from './constants/site';
 import { apiUrl } from './lib/api';
-import type { Lang } from './types/content';
+import { hasSeenIntroInSession, markIntroSeenInSession } from './utils';
+import type { Lang } from './types';
 import './index.css';
 
-const INTRO_SEEN_SESSION_KEY = 'introSplashSeen';
-
-function hasSeenIntroInSession(): boolean {
-  try {
-    return window.sessionStorage.getItem(INTRO_SEEN_SESSION_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function markIntroSeenInSession() {
-  try {
-    window.sessionStorage.setItem(INTRO_SEEN_SESSION_KEY, '1');
-  } catch {
-    // Ignore storage errors and keep default behavior.
-  }
-}
-
-const SPLASH_WELCOME: Record<Lang, string> = {
-  it: 'Benvenuto',
-  en: 'Welcome',
-  fr: 'Bienvenue',
-};
-
+/**
+ * Request backend wakeup call (for sleeping servers)
+ */
 let wakeupRequested = false;
 
 function requestWakeup() {
@@ -47,22 +28,9 @@ function requestWakeup() {
 
 requestWakeup();
 
-function IntroSplash({ lang }: { lang: Lang }) {
-  return (
-    <section className="intro-splash" aria-label="Welcome intro">
-      <div className="intro-light" aria-hidden="true" />
-      <figure className="intro-butterfly-wrap">
-        <img className="intro-butterfly-image" src="/farfalla.png" alt="Blue butterfly" />
-      </figure>
-
-      <p className="intro-welcome">{SPLASH_WELCOME[lang]}</p>
-      <div className="intro-progress" aria-hidden="true">
-        <span className="intro-progress-bar" />
-      </div>
-    </section>
-  );
-}
-
+/**
+ * Root component - manages intro splash display
+ */
 function Root() {
   const [showIntro, setShowIntro] = useState(() => !hasSeenIntroInSession());
   const [splashLang] = useState<Lang>(getPreferredLanguage);
@@ -72,6 +40,7 @@ function Root() {
       return;
     }
 
+    // Hide intro after 7 seconds
     const timer = window.setTimeout(() => {
       setShowIntro(false);
       markIntroSeenInSession();
