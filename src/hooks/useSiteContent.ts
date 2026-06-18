@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import { apiUrl } from '../lib/api';
-import type { ContactResponse, HomeResponse, Lang } from '../types/content';
+import { fetchContact, fetchHomeContent } from '../services';
+import { inlineVerseReferences } from '../utils';
+import type { ContactResponse, Lang } from '../types';
 
+/**
+ * Site content state
+ */
 type SiteContentState = {
   brand: string;
   heading: string;
@@ -12,6 +16,9 @@ type SiteContentState = {
   error: string;
 };
 
+/**
+ * Default initial state
+ */
 const initialState: SiteContentState = {
   brand: 'A New Life',
   heading: 'Una Vita Nuova',
@@ -22,11 +29,13 @@ const initialState: SiteContentState = {
   error: '',
 };
 
-function inlineVerseReferences(html: string): string {
-  const pattern = /<p class="ver">([\s\S]*?)<\/p>\s*<p class="ver-rif">([\s\S]*?)<\/p>/g;
-  return html.replace(pattern, '<p class="ver">$1<span class="ver-ref">$2</span></p>');
-}
-
+/**
+ * Hook to manage site content loading
+ * Fetches home content and contacts for the specified language
+ *
+ * @param lang - Language for the content
+ * @returns Current content state
+ */
 export function useSiteContent(lang: Lang): SiteContentState {
   const [state, setState] = useState<SiteContentState>(initialState);
 
@@ -38,17 +47,11 @@ export function useSiteContent(lang: Lang): SiteContentState {
       try {
         setState((current) => ({ ...current, loading: true, error: '' }));
 
-        const [homeRes, contactRes] = await Promise.all([
-          fetch(apiUrl(`/content/home?lang=${lang}`)),
-          fetch(apiUrl(`/contact?lang=${lang}`)),
+        // Load home content and contacts in parallel
+        const [homeData, contactData] = await Promise.all([
+          fetchHomeContent(lang),
+          fetchContact(lang),
         ]);
-
-        if (!homeRes.ok || !contactRes.ok) {
-          throw new Error('API_UNAVAILABLE');
-        }
-
-        const homeData = (await homeRes.json()) as HomeResponse;
-        const contactData = (await contactRes.json()) as ContactResponse;
 
         if (cancelled) {
           return;
@@ -68,7 +71,9 @@ export function useSiteContent(lang: Lang): SiteContentState {
           return;
         }
 
-        if ((err as Error).message === 'API_UNAVAILABLE') {
+        // Handle API errors with automatic retry
+        const isApiUnavailable = (err as Error).message.includes('HTTP');
+        if (isApiUnavailable) {
           setState((current) => ({ ...current, waitingForApi: true, error: '' }));
           retryTimer = setTimeout(load, 2500);
           return;
@@ -85,6 +90,7 @@ export function useSiteContent(lang: Lang): SiteContentState {
 
     load();
 
+    // Cleanup: cancel loading if component unmounts
     return () => {
       cancelled = true;
       if (retryTimer) {

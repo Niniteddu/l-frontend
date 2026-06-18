@@ -5,7 +5,7 @@ import { ContentFeedback } from './components/ContentFeedback';
 import { API_WAITING_MESSAGE, getPreferredLanguage, LANG_LABEL, OG_LOCALE, SEO, UI_COPY } from './constants/site';
 import { useSiteContent } from './hooks/useSiteContent';
 import { getCurrentPathname, withBase } from './lib/routing';
-import type { Lang } from './types/content';
+import type { Lang } from './types';
 
 function App() {
   const [lang, setLang] = useState<Lang>(getPreferredLanguage);

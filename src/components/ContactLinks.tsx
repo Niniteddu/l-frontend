@@ -1,6 +1,5 @@
-import type { ContactLink } from '../types/content';
-import type { Lang } from '../types/content';
 import { UI_COPY } from '../constants/site';
+import type { ContactLink, Lang } from '../types';
 
 type ContactLinksProps = {
   title: string;
