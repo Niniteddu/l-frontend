@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ContentFeedback } from '../components/ContentFeedback';
-import { API_WAITING_MESSAGE, SEO, UI_COPY } from '../constants/site';
+import { API_WAITING_MESSAGE, SEO } from '../constants/site';
 import { useSiteContent } from '../hooks/useSiteContent';
 import type { Lang } from '../types';
 import { PageLayout } from './PageLayout';

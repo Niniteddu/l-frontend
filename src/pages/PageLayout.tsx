@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { LANG_LABEL, OG_LOCALE, SEO, UI_COPY } from '../constants/site';
+import { LANG_LABEL, OG_LOCALE, UI_COPY } from '../constants/site';
 import { withBase } from '../lib/routing';
 import type { Lang } from '../types';
 
