@@ -23,7 +23,6 @@ export function HomePage({ lang, onLanguageChange, brandName }: HomePageProps) {
     <PageLayout
       lang={lang}
       onLanguageChange={onLanguageChange}
-      isContactPage={false}
       pageTitle={seo.title}
       pageDescription={seo.description}
       brandName={brandName}

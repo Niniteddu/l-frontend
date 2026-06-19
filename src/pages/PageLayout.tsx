@@ -1,13 +1,11 @@
 import { Helmet } from 'react-helmet-async';
-import { LANG_LABEL, OG_LOCALE, UI_COPY } from '../constants/site';
-import { withBase } from '../lib/routing';
+import { LANG_LABEL, OG_LOCALE } from '../constants/site';
 import type { Lang } from '../types';
 
 type PageLayoutProps = {
   children: React.ReactNode;
   lang: Lang;
   onLanguageChange: (lang: Lang) => void;
-  isContactPage: boolean;
   pageTitle: string;
   pageDescription: string;
   brandName: string;
@@ -21,14 +19,11 @@ export function PageLayout({
   children,
   lang,
   onLanguageChange,
-  isContactPage,
   pageTitle,
   pageDescription,
   brandName,
   heading,
 }: PageLayoutProps) {
-  const uiCopy = UI_COPY[lang];
-
   return (
     <>
       <Helmet>
@@ -63,12 +58,6 @@ export function PageLayout({
                   {LANG_LABEL[item]}
                 </button>
               ))}
-              <a
-                href={isContactPage ? withBase('/') : withBase('/contact')}
-                className="rounded-full border border-white/70 px-2.5 py-1 text-xs font-semibold text-white transition hover:bg-white/10 sm:px-4 sm:py-2 sm:text-sm"
-              >
-                {isContactPage ? uiCopy.homeLabel : uiCopy.contactLabel}
-              </a>
             </div>
           </nav>
         </header>
