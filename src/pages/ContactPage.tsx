@@ -36,6 +36,7 @@ export function ContactPage({ lang, onLanguageChange }: ContactPageProps) {
     >
       <section className="mx-auto w-full max-w-5xl rounded-none border border-brand-deep/10 bg-white p-6 shadow-soft sm:rounded-2xl lg:p-8 xl:p-10">
         <ContentFeedback
+          lang={lang}
           loading={loading}
           waitingForApi={waitingForApi}
           waitingMessage={contactDescription}
