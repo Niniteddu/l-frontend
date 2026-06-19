@@ -10,5 +10,14 @@
  */
 export function inlineVerseReferences(html: string): string {
   const pattern = /<p class="ver">([\s\S]*?)<\/p>\s*<p class="ver-rif">([\s\S]*?)<\/p>/g;
-  return html.replace(pattern, '<p class="ver">$1<span class="ver-ref">$2</span></p>');
+  const withInlineReferences = html.replace(
+    pattern,
+    '<p class="ver">$1<span class="ver-ref">$2</span></p>',
+  );
+
+  // The contact page is temporarily unavailable, so remove the footer navigation CTA from home content.
+  return withInlineReferences.replace(
+    /<div class="w-full footer-nav-wrap">[\s\S]*?<\/div>/g,
+    '',
+  );
 }
